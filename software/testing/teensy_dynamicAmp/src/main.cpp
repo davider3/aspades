@@ -4,13 +4,17 @@
 #include "MCP6S2x.h"
 #include "LoopAntenna.h"
 
-#define PRINT_DELAY 5e5 // 500ms
+#define PRINT_DELAY 2e6
+#define DEBUG_CH0 true
+#define DEBUG_CH1 true
+#define DEBUG_CH2 true
 
 MCP6S2x* amp1 = new MCP6S2x(A0, 10, 1);
 MCP6S2x* amp2 = new MCP6S2x(A1, 9, 1);
 ADS1115* adc= new ADS1115(ADS1115_ADDRESS);
 LoopAntenna ant = LoopAntenna(amp1, amp2, CH0, CH0);
 LoopAntenna ant2 = LoopAntenna(amp1, amp2, CH1, CH0);
+LoopAntenna ant3 = LoopAntenna(amp1, amp2, CH2, CH0);
 IntervalTimer timer;
 
 float conversionFactor;
@@ -27,24 +31,37 @@ void setup() {
 
     print = true;
 
-    timer.begin(printIt, 500000);
+    timer.begin(printIt, PRINT_DELAY);
 }
 
 void loop() {
 
     ant.measureAmplitude();
     ant2.measureAmplitude();
+    ant3.measureAmplitude();
 
     if(print){
-        Serial.print("Channel 1: ");Serial.print(ant.getAmplitude()*.003207);
-        Serial.print("\tGain: "); Serial.print(ant.getTotalGain());
-        Serial.println();
-        Serial.print("\tOriginal Amplitude: "); Serial.print(ant.getOGAmplitude(), 6);
-        Serial.println();
-        Serial.print("Channel 2: ");Serial.print(ant2.getAmplitude()*.003207);
-        Serial.print("\tGain: "); Serial.print(ant2.getTotalGain());
-        Serial.println();
-        Serial.print("\tOriginal Amplitude: "); Serial.print(ant2.getOGAmplitude(), 6);
+        if(DEBUG_CH0){
+            Serial.print("Channel 1: ");Serial.print(ant.getAmplitude()*ADC_CONVERT);
+            Serial.print("\tGain: "); Serial.print(ant.getTotalGain());
+            Serial.println();
+            Serial.print("\tOriginal Amplitude: "); Serial.print(ant.getOGAmplitude(), 6);
+            Serial.println();
+        }
+        if(DEBUG_CH1){
+            Serial.print("Channel 2: ");Serial.print(ant2.getAmplitude()*ADC_CONVERT);
+            Serial.print("\tGain: "); Serial.print(ant2.getTotalGain());
+            Serial.println();
+            Serial.print("\tOriginal Amplitude: "); Serial.print(ant2.getOGAmplitude(), 6);
+            Serial.println();
+        }
+        if(DEBUG_CH2){
+            Serial.print("Channel 3: ");Serial.print(ant3.getAmplitude()*ADC_CONVERT);
+            Serial.print("\tGain: "); Serial.print(ant3.getTotalGain());
+            Serial.println();
+            Serial.print("\tOriginal Amplitude: "); Serial.print(ant3.getOGAmplitude(), 6);
+            Serial.println();
+        }
         Serial.println();
         print = false;
     }
