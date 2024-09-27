@@ -1,18 +1,24 @@
 #include <Arduino.h>
-
-// put function declarations here:
-int myFunction(int, int);
+#include <FreqMeasure.h>
 
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+  Serial.begin(9600);
+  FreqMeasure.begin();
 }
+
+double sum=0;
+int count=0;
 
 void loop() {
-  // put your main code here, to run repeatedly:
-}
-
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+  if (FreqMeasure.available()) {
+    // average several reading together
+    sum = sum + FreqMeasure.read();
+    count = count + 1;
+    if (count > 30) {
+      float frequency = FreqMeasure.countToFrequency(sum / count);
+      Serial.println(frequency);
+      sum = 0;
+      count = 0;
+    }
+  }
 }
