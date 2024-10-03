@@ -3,7 +3,7 @@
 
 void setup() {
   Serial.begin(9600);
-  FreqMeasure.begin();
+  FreqMeasure.begin(); // PIN 22 on Teensy 4.0
 }
 
 double sum=0;
