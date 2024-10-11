@@ -28,7 +28,7 @@ void setup() {
         timer.begin(printIt, PRINT_DELAY);
     }
 
-    analogReadAveraging(1);
+    analogReadAveraging(4);
 
     print = false;
 
