@@ -9,7 +9,7 @@ MCP6S2x* amp2 = new MCP6S2x(A1, 9, 1);
 String temp = "";
 bool inputComplete = false;
 
-enum STATES {SETUP, CONTROL1, CONTROL2};
+enum STATES {SETUP, CONTROL1, CONTROL2, CHANNEL_SELECT};
 STATES state = SETUP;
 
 void setup() {
@@ -63,12 +63,32 @@ void loop() {
     case CONTROL2:
       if(inputComplete){
         temp = temp.trim();
-        set2Gain(temp.toInt());
+
+        if(temp == "change channel"){
+          Serial.println("Specify the channel you would like to switch to");
+          state = CHANNEL_SELECT;
+        }else{
+          set2Gain(temp.toInt());
+        }
+
         temp = "";
         inputComplete = false;
       }
 
       break;
+
+      case CHANNEL_SELECT:
+        if(inputComplete){
+          temp = temp.trim();
+
+          amp1->changeChannel(temp.toInt());
+          state = CONTROL2;
+          
+          temp = "";
+          inputComplete = false;
+        }
+
+        break;
   }
 }
 
